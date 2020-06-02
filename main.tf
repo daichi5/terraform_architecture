@@ -199,10 +199,28 @@ resource "aws_route" "private_1" {
     destination_cidr_block = "0.0.0.0/0"
 }
 
-module "example_sg" {
-    source = "./security_group"
-    name = "module-sg"
-    vpc_id = aws_vpc.example.id
-    port = 80
-    cidr_blocks = ["0.0.0.0/0"]
+# load balancer
+
+resource "aws_lb" "example" {
+    name = "example"
+    load_balancer_type = "application"
+    internal = false
+    idle_timeout = 60
+    enable_deletion_protection = true
+
+    subnets = [
+        aws_subnet.public_0.id,
+        aws_subnet.public_1.id,
+    ]
+
+    access_logs {
+        bucket = aws_s3_bucket.alb_log.id
+        enabled = true
+    }
+
+    security_groups = []
+}
+
+output "alb_dns_name" {
+    value = aws_lb.example.dns_name
 }
