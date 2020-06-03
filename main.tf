@@ -244,6 +244,24 @@ resource "aws_lb_listener" "http" {
     }
 }
 
+resource "aws_lb_listener" "https" {
+    load_balancer_arn = aws_lb.example.arn
+    port = "443"
+    protocol = "HTTPS"
+    certificate_arn = aws_acm_certificate.example.arn
+    ssl_policy = "ELBSecurityPolicy-2016-08"
+
+    default_action {
+        type = "fixed-response"
+
+        fixed_response {
+            content_type = "text/plain"
+            message_body = "this is https"
+            status_code = "200"
+        }
+    }
+}
+
 # security groups
 
 module "http_sg" {
@@ -300,4 +318,12 @@ resource "aws_acm_certificate" "example" {
     lifecycle {
         create_before_destroy = true
     }
+}
+
+resource "aws_route53_record" "example_certificate" {
+    name = aws_acm_certificate.example.domain_validation_options[0].resource_record_name
+    type = aws_acm_certificate.example.domain_validation_options[0].resource_record_type
+    records = [aws_acm_certificate.example.domain_validation_options[0].resource_record_value]
+    zone_id = aws_route53_zone.test_example.id
+    ttl = 60
 }
