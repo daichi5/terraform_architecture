@@ -269,3 +269,25 @@ module "http_redirect_sg" {
     port = 8080
     cidr_blocks = ["0.0.0.0/0"]
 }
+
+# route53
+
+resource "aws_route53_zone" "test_example" {
+    name = "test.examle.com"
+}
+
+resource "aws_route53_record" "example" {
+    zone_id = aws_route53_zone.test_example.zone_id
+    name = aws_route53_zone.test_example.name
+    type = "A"
+
+    alias {
+        name = aws_lb.example.dns_name
+        zone_id = aws_lb.example.zone_id
+        evaluate_target_health = true
+    }
+}
+
+output "domain_name" {
+    value = aws_route53_record.example.name
+}
