@@ -262,6 +262,22 @@ resource "aws_lb_listener" "https" {
     }
 }
 
+resource "aws_lb_listener_rule" "example" {
+    listener_arn = aws_lb_listener.https.arn
+    priority = 100
+
+    action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.example.arn
+    }
+
+    condition {
+        path_pattern {
+            values = ["/*"]
+        }
+    }
+}
+
 resource "aws_lb_listener" "redirect_http_to_https" {
     load_balancer_arn = aws_lb.example.arn
     port = "8080"
