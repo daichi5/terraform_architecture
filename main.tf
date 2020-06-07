@@ -244,26 +244,26 @@ resource "aws_lb_listener" "http" {
     }
 }
 
-resource "aws_lb_listener" "https" {
-    load_balancer_arn = aws_lb.example.arn
-    port = "443"
-    protocol = "HTTPS"
-    certificate_arn = aws_acm_certificate.example.arn
-    ssl_policy = "ELBSecurityPolicy-2016-08"
+# resource "aws_lb_listener" "https" {
+#     load_balancer_arn = aws_lb.example.arn
+#     port = "443"
+#     protocol = "HTTPS"
+#     certificate_arn = aws_acm_certificate.example.arn
+#     ssl_policy = "ELBSecurityPolicy-2016-08"
 
-    default_action {
-        type = "fixed-response"
+#     default_action {
+#         type = "fixed-response"
 
-        fixed_response {
-            content_type = "text/plain"
-            message_body = "this is https"
-            status_code = "200"
-        }
-    }
-}
+#         fixed_response {
+#             content_type = "text/plain"
+#             message_body = "this is https"
+#             status_code = "200"
+#         }
+#     }
+# }
 
 resource "aws_lb_listener_rule" "example" {
-    listener_arn = aws_lb_listener.https.arn
+    listener_arn = aws_lb_listener.http.arn
     priority = 100
 
     action {
@@ -433,5 +433,7 @@ resource "aws_ecs_service" "example" {
     lifecycle {
         ignore_changes = [task_definition]
     }
+
+    depends_on = [aws_lb_target_group.example]
 }
 
