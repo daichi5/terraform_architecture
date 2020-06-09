@@ -528,7 +528,27 @@ resource "aws_kms_key" "example" {
     deletion_window_in_days = 30
 }
 
-resource "aws_km_alias" "example" {
+resource "aws_kms_alias" "example" {
     name = "alias/example"
     target_key_id = aws_kms_key.example.key_id
+}
+
+# Parameter Store
+
+resource "aws_ssm_parameter" "db_username" {
+    name = "/db/username"
+    value = "root"
+    type = "String"
+    description = "database user"
+}
+
+resource "aws_ssm_parameter" "db_password" {
+    name = "/db/password"
+    value = "uninitialized"
+    type = "SecureString"
+    description = "database password"
+
+    lifecycle {
+        ignore_changes = [value]
+    }
 }
