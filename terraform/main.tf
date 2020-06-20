@@ -664,6 +664,7 @@ resource "aws_elasticache_replication_group" "example" {
   apply_immediately             = false
   security_group_ids            = [module.redis_sg.security_group_id]
   parameter_group_name          = aws_elasticache_parameter_group.example.name
+  subnet_group_name = aws_elasticache_subnet_group.example.name
 }
 
 module "redis_sg" {
@@ -793,7 +794,7 @@ module "codepipeline_role" {
 }
 
 resource "aws_s3_bucket" "artifact" {
-  bucket = "artifact-pragmatic-terraform"
+  bucket = "sawa-artifact-pragmatic-terraform"
 
   lifecycle_rule {
     enabled = true
@@ -891,18 +892,19 @@ provider "github" {
   individual = true
 }
 
-resource "github_repository_webhook" "example" {
-  repository = "terraform_architecture"
+# webhookはorganizationじゃないと作れない
+# resource "github_repository_webhook" "example" {
+#   repository = "terraform_architecture"
 
-  configuration {
-    url          = aws_codepipeline_webhook.example.url
-    secret       = "RandomStringTokenMoreThan20Bytes!"
-    content_type = "json"
-    insecure_ssl = false
-  }
+#   configuration {
+#     url          = aws_codepipeline_webhook.example.url
+#     secret       = "RandomStringTokenMoreThan20Bytes!"
+#     content_type = "json"
+#     insecure_ssl = false
+#   }
 
-  events = ["push"]
-}
+#   events = ["push"]
+# }
 
 # SSM
 
@@ -958,7 +960,7 @@ output "operation_instance_id" {
 }
 
 resource "aws_s3_bucket" "operation" {
-  bucket = "operation-pragmatic-terraform"
+  bucket = "sawa-operation-pragmatic-terraform"
 
   lifecycle_rule {
     enabled = true
@@ -995,7 +997,7 @@ EOF
 # Logging
 
 resource "aws_s3_bucket" "cloudwatch_logs" {
-  bucket = "cloudwatch-logs-pragmatic-terraform"
+  bucket = "sawa-cloudwatch-logs-pragmatic-terraform"
 
   lifecycle_rule {
     enabled = true
