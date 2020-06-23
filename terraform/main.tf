@@ -7,6 +7,32 @@ provider "aws" {
   region  = "ap-northeast-1"
 }
 
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+data "aws_region" "current" {}
+
+output "region_name" {
+  value = data.aws_region.current.name
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+output "avaliability_zones" {
+  value = data.aws_availability_zones.available.names
+}
+
+data "aws_elb_service_account" "current" {}
+
+output "alb_service_account_id" {
+  value = data.aws_elb_service_account.current.id
+}
+
 data "aws_iam_policy_document" "allow_describe_regions" {
   statement {
     effect    = "Allow"
