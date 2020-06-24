@@ -1100,3 +1100,17 @@ resource "aws_cloudwatch_log_subscription_filter" "example" {
   filter_pattern  = "[]"
   role_arn        = module.cloudwatch_logs_role.iam_role_arn
 }
+
+# CodeBuild for Continuous Applying
+
+module "continuous_apply_codebuild_role" {
+  source = "./iam_role"
+  name = "continuous-apply"
+  identifier = "codebuild.amazon.com"
+  policy = data.aws_iam_policy.administrator_access.policy
+}
+
+data "aws_iam_policy" "administrator_access" {
+  arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+}
+
